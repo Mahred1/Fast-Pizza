@@ -1,20 +1,30 @@
-import { useState } from 'react';
-import Button from '../../ui/Button';
+import { useState } from "react";
+import Button from "../../ui/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { updateName } from "./userSlice";
+import { useNavigate } from "react-router-dom";
 
 function CreateUser() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
+  const dispatch = useDispatch();
+  const user = useSelector(store=>store.user.username)
+  const navigate = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!username) return;
+    dispatch(updateName(username));
+    navigate("/menu");
   }
 
-  return (
+  return !user ? (
     <form onSubmit={handleSubmit}>
       <p className="mb-4 text-sm text-stone-600 md:text-base">
         👋 Welcome! Please start by telling us your name:
       </p>
 
       <input
+     
         type="text"
         placeholder="Your full name"
         value={username}
@@ -22,13 +32,13 @@ function CreateUser() {
         className="input mb-8 w-72"
       />
 
-      {username !== '' && (
+      {username !== "" && (
         <div>
           <Button type="primary">Start ordering</Button>
         </div>
       )}
-    </form>
-  );
+    </form>):<Button to={'/menu'} type={'primary'}>Continue ordering, {user}</Button>
+  ;
 }
 
 export default CreateUser;
